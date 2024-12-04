@@ -141,153 +141,175 @@ def nota_imdb_metascore():
 
     # Análise
     st.subheader('Análise')
-    st.write("As notas Metascore variam mais que as notas IMDb.")
+    st.write("As notas Metascore variam mais que as notas IMDb. Nota-se que notas do IMDb são baseadas em avaliações de usuários, enquanto as notas Metascore representam um consenso dos críticos cinematográficos. Portanto, percebe-se que o espectador “comum” não possui o costume de avaliar filmes nos extremos da escala, principalmente de forma negativa, ao contrário dos críticos profissionais.")
 
-# def Metascore_x_IMDb_gênero(): #perfeito
+def Metascore_x_IMDb_gênero(): 
+    st.title("Comparativo entre notas Metascore x IMDb por gênero")
+    datam=pd.DataFrame()
+    fig, ax = plt.subplots(figsize=(10, 6))#criando a figura
+    datam['IMDb']= dados['IMDB_Rating'] * 10 #deixando as notas na mesma escala
+    datam['MetaScore'] = dados['Meta_score']
+    datam['Genre'] = dados ['Genre']
+    datam['Genre'] = datam["Genre"].str.split(',') #separa os gêneros entre vírgulas
+    datam = datam.explode("Genre")
+    datam = datam.reset_index()
+    datam = datam.melt( id_vars = ["Genre"], value_vars=["IMDb","MetaScore"] ,value_name="Notas", var_name='Instituicao'  )
+    
+    fig, ax = plt.subplots(figsize=(10,6))#cria a figura
+    #cria o boxplot
+    sns.boxplot(data= datam, y="Genre", x="Notas", hue="Instituicao", ax = ax)
+    ax.set_title("IMDb vs MetaScore por gênero")
+    st.pyplot(fig)
+    #analise
+    st.subheader('Análise')
+    st.write(" A partir da observação do gráfico podemos perceber que os filmes Noir são os que mais recebem notas altas do Metascore e os que têm as notas mais distribuídas são os dramas. Semelhante ao observado na análise de distribuição de notas IMDb e Metascore,  as notas IMDb têm uma variação muito baixa independentemente do gênero.")
+# def Metascore_x_IMDb_gênero():
 #     st.title("Comparativo entre notas Metascore x IMDb por gênero")
-#     #grafico faturamentoxgenero
-#     datam=pd.DataFrame()
-#     fig, ax = plt.subplots(figsize=(10, 6))#criando a figura
-#     datam['IMDb']= dados['IMDB_Rating'] * 10 #deixando as notas na mesma escala
+#     datam = pd.DataFrame()
+#     datam['IMDb'] = dados['IMDB_Rating'] * 10
 #     datam['MetaScore'] = dados['Meta_score']
-#     datam['Genre'] = dados ['Genre']
+#     datam['Genre'] = dados['Genre']
 #     datam['Genre'] = datam["Genre"].str.split(',') #separa os gêneros entre vírgulas
 #     datam = datam.explode("Genre")
 #     datam = datam.reset_index()
-#     datam = datam.melt( id_vars = ["Genre"], value_vars=["IMDb","MetaScore"] ,value_name="Notas", var_name='Instituicao'  )
-    
-#     fig, ax = plt.subplots(figsize=(10,6))#cria a figura
-#     #cria o boxplot
-#     sns.boxplot(data= datam, y="Genre", x="Notas", hue="Instituicao", ax = ax)
-#     ax.set_title("IMDb vs MetaScore por gênero")
-#     st.pyplot(fig)
-#     #analise
+#     datam = datam.melt(id_vars=["Genre"], value_vars=["IMDb", "MetaScore"], value_name="Notas", var_name='Instituicao')
+
+#     # Interactivity with Plotly Box Plot
+#     fig = px.box(datam, x="Notas", y="Genre", color="Instituicao", title="IMDb vs MetaScore por Gênero")
+#     fig.update_layout(plot_bgcolor='white')
+#     st.plotly_chart(fig)
+
+#     # Análise
 #     st.subheader('Análise')
-#     st.write(" A partir da observação do gráfico podemos perceber que os filmes Noir são os que mais recebem notas altas do Metascore e os que têm as notas mais distribuídas são os dramas. Semelhante ao observado na figura 3,  as notas IMDb têm uma variação muito baixa independentemente do gênero.")
-def Metascore_x_IMDb_gênero():
-    st.title("Comparativo entre notas Metascore x IMDb por gênero")
-    datam = pd.DataFrame()
-    datam['IMDb'] = dados['IMDB_Rating'] * 10
-    datam['MetaScore'] = dados['Meta_score']
-    datam['Genre'] = dados['Genre']
-    datam['Genre'] = datam["Genre"].str.split(',')
-    datam = datam.explode("Genre")
-    datam = datam.reset_index()
-    datam = datam.melt(id_vars=["Genre"], value_vars=["IMDb", "MetaScore"], value_name="Notas", var_name='Instituicao')
-
-    # Interactivity with Plotly Box Plot
-    fig = px.box(datam, x="Notas", y="Genre", color="Instituicao", title="IMDb vs MetaScore por Gênero")
-    fig.update_layout(plot_bgcolor='white')
-    st.plotly_chart(fig)
-
-    # Análise
-    st.subheader('Análise')
-    st.write("Os filmes Noir são os que mais recebem notas altas do Metascore.")
+#     st.write("Os filmes Noir são os que mais recebem notas altas do Metascore.")
 
 
-
-# def notas_metascore_x_imdb_por_decada():
-#     st.title("Notas IMDb e notas Metacritic por década")
-#     #grafico 
-#     data = pd.DataFrame()
-#     data['Released_Year'] = pd.to_numeric(dados['Released_Year'], 'coerce')
-#     data['IMDB_Rating'] = dados['IMDB_Rating'] *10
-#     data['Meta_score'] = dados['Meta_score']
-#     fig, ax = plt.subplots(figsize=(10,6))#figura
-#     #criando os dois graficos
-#     sns.regplot(data=data, x = 'Released_Year', y = 'IMDB_Rating', order = 4, color = 'red', scatter_kws={'alpha':0.1})
-#     sns.regplot(data=data, x = 'Released_Year', y = 'Meta_score', order = 4, color = 'blue', scatter_kws={'alpha':0.1})
-#     #ajustando os rótulos
-#     plt.xlim(1920,2020)
-#     plt.xlabel('Ano')
-#     plt.ylabel('Nota')
-#     #criando a legenda do grafico
-#     blueLine = mpatches.Patch(color='blue', label='Meta Score')
-#     redLine = mpatches.Patch(color='red', label='IMDB Rating')
-#     plt.legend(handles=[blueLine, redLine])
-#     #plotando a figura no site
-#     st.pyplot(fig)
-#     #analise
-#     st.subheader('Análise')
-#     st.write("Observando o gráfico percebemos que as avaliações Metascore tendem a ser maiores que as IMDb para filmes anteriores a década de 80 e menores para os filmes após a década de 80, apresentando seu pico de notas baixas nos anos 2000.")
 def notas_metascore_x_imdb_por_decada():
     st.title("Notas IMDb e notas Metacritic por década")
+    
     data = pd.DataFrame()
     data['Released_Year'] = pd.to_numeric(dados['Released_Year'], 'coerce')
-    data['IMDB_Rating'] = dados['IMDB_Rating'] * 10
+    data['IMDB_Rating'] = dados['IMDB_Rating'] * 10  
     data['Meta_score'] = dados['Meta_score']
+    
+    decade_start = st.slider('Escolha a década de lançamento', 
+                             min_value=1920, 
+                             max_value=2020, 
+                             step=10, 
+                             value=(1920, 2020))
 
-    # Interactivity with Plotly Regression Plot
-    fig = px.scatter(data, x='Released_Year', y='IMDB_Rating', trendline="ols", color='IMDB_Rating', title='IMDB vs MetaScore por Década')
-    fig.update_layout(plot_bgcolor='white')
-    st.plotly_chart(fig)
+    data_filtered = data[(data['Released_Year'] >= decade_start[0]) & (data['Released_Year'] <= decade_start[1])]
 
-    # Análise
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    sns.set(style="whitegrid", palette="Blues")
+    
+    sns.regplot(data=data_filtered, 
+                x='Released_Year', 
+                y='IMDB_Rating', 
+                order=4, 
+                scatter_kws={'alpha': 0.3, 'color': '#F5DE50'}, 
+                line_kws={'color': '#F5DE50'})
+    
+    sns.regplot(data=data_filtered, 
+                x='Released_Year', 
+                y='Meta_score', 
+                order=4, 
+                scatter_kws={'alpha': 0.3, 'color': '#6495ED'}, 
+                line_kws={'color': '#6495ED'})
+
+    ax.set_xlim([decade_start[0], decade_start[1]])
+    ax.set_xlabel('Ano')
+    ax.set_ylabel('Nota')
+
+    redLine = mpatches.Patch(color='#F5DE50', label='IMDB Rating')
+    blueLine = mpatches.Patch(color='#6495ED', label='Meta Score')
+    ax.legend(handles=[redLine, blueLine])
+    st.pyplot(fig)
+
+    # Analise
     st.subheader('Análise')
-    st.write("As avaliações Metascore tendem a ser maiores que as IMDb para filmes anteriores a década de 80.")
+    st.write("Observando o gráfico, percebemos que as avaliações Metascore tendem a ser maiores que as IMDb para filmes anteriores à década de 80 "
+             "e menores para os filmes após a década de 80, apresentando seu pico de notas baixas nos anos 2000.")
 
-
-# def notas_metascore_x_duração(): 
+# def notas_metascore_x_duração():
 #     st.title("Comparativo entre a duração dos filmes e suas notas Metascore")
-#     #grafico 
 #     data = pd.DataFrame()
 #     data['Runtime'] = dados['Runtime'].str.split(' ').str[0].astype(int)
 #     data['Meta_score'] = dados['Meta_score']
-#     fig, ax = plt.subplots(figsize=(10,6))#figura
-#     sns.regplot(data = data, x='Meta_score', y="Runtime",order = 2,scatter_kws={'alpha':0.1}, ax = ax)#cria grafico de dispersão
-#     #rotulos
-#     plt.ylim(0,250)
-#     plt.ylabel('Duração')
-#     plt.xlabel('Nota MetaScore')
-#     st.pyplot(fig)
-#     #analise
+
+#     fig = px.scatter(data, x='Meta_score', y='Runtime', trendline="ols", title="MetaScore x Duração dos Filmes")
+#     fig.update_layout(plot_bgcolor='white')
+#     st.plotly_chart(fig)
+
+#     # Análise
 #     st.subheader('Análise')
-#     st.write("Observando percebemos que as notas são bem distribuídas entre as durações, não aparentando existir alguma correlação.")
-def notas_metascore_x_duração():
+#     st.write("Não parece haver correlação significativa entre as notas e a duração dos filmes.")
+
+def notas_metascore_x_duração(): #perfeito
     st.title("Comparativo entre a duração dos filmes e suas notas Metascore")
+    #grafico 
     data = pd.DataFrame()
     data['Runtime'] = dados['Runtime'].str.split(' ').str[0].astype(int)
     data['Meta_score'] = dados['Meta_score']
-
-    fig = px.scatter(data, x='Meta_score', y='Runtime', trendline="ols", title="MetaScore x Duração dos Filmes")
-    fig.update_layout(plot_bgcolor='white')
-    st.plotly_chart(fig)
-
-    # Análise
+    fig, ax = plt.subplots(figsize=(10,6))
+    sns.set(style="whitegrid")
+    sns.regplot(
+        data=data, 
+        x='Meta_score', 
+        y="Runtime", 
+        order=2, 
+        scatter_kws={'alpha': 0.1, 'color': '#1f77b4'},  
+        line_kws={'color': '#1f77b4'},  
+        ax=ax
+    )
+    sns.regplot(data = data, x='Meta_score', y="Runtime",order = 2,scatter_kws={'alpha':0.1}, ax = ax)
+    plt.ylim(0,250)
+    plt.ylabel('Duração')
+    plt.xlabel('Nota MetaScore')
+    st.pyplot(fig)
+    #analise
     st.subheader('Análise')
-    st.write("Não parece haver correlação significativa entre as notas e a duração dos filmes.")
+    st.write("As notas são bem distribuídas entre as diversas durações de filmes, não aparentando existir alguma correlação.")
 
-
-# def decadas_x_duração(): 
-#     st.title("Duração dos filmes de acordo com as décadas")
-#     #grafico 
-#     data = pd.DataFrame()
-#     data['Released_Year'] = pd.to_numeric(dados['Released_Year'], 'coerce')
-#     bins = [1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020]
-#     labels = ['1920', '1930', '1940', '1950', '1960','1970','1980', '1990','2000', '2010']
-#     data['Runtime'] = dados['Runtime'].str.split(' ').str[0].astype(int)
-#     fig, ax = plt.subplots(figsize=(10,6))
-#     sns.regplot(data = data, x='Released_Year', y="Runtime",order = 4,scatter_kws={'alpha':0.1}, ax=ax)
-#     plt.ylim(0,250)
-#     st.pyplot(fig)
-#     #analise
-#     st.subheader('Análise')
-#     st.write(" Observando a tendência percebemos que a duração dos filmes aumentou com o passar do tempo e hoje caminha para uma estabilização por volta dos 130 min.")
-
-def decadas_x_duração():
+def decadas_x_duração(): 
     st.title("Duração dos filmes de acordo com as décadas")
+    #grafico 
     data = pd.DataFrame()
     data['Released_Year'] = pd.to_numeric(dados['Released_Year'], 'coerce')
+    bins = [1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020]
+    labels = ['1920', '1930', '1940', '1950', '1960','1970','1980', '1990','2000', '2010']
     data['Runtime'] = dados['Runtime'].str.split(' ').str[0].astype(int)
-
-    # Interactivity with Plotly Regression Plot
-    fig = px.scatter(data, x='Released_Year', y='Runtime', trendline="ols", title="Duração dos Filmes por Década")
-    fig.update_layout(plot_bgcolor='white')
-    st.plotly_chart(fig)
-
-    # Análise
+    fig, ax = plt.subplots(figsize=(10,6))
+    sns.regplot(
+        data=data, 
+        x='Released_Year', 
+        y="Runtime", 
+        order=4, 
+        scatter_kws={'alpha': 0.1, 'color': '#1f77b4'},  
+        line_kws={'color': '#1f77b4'},  
+        ax=ax
+    )
+    plt.ylim(0,250)
+    st.pyplot(fig)
+    #analise
     st.subheader('Análise')
-    st.write("A duração dos filmes aumentou com o tempo, mas parece estabilizar após a década de 90.")
+    st.write(" Observando a tendência percebemos que a duração dos filmes aumentou com o passar do tempo e hoje caminha para uma estabilização por volta dos 130 min.")
+
+# def decadas_x_duração():
+#     st.title("Duração dos filmes de acordo com as décadas")
+#     data = pd.DataFrame()
+#     data['Released_Year'] = pd.to_numeric(dados['Released_Year'], 'coerce')
+#     data['Runtime'] = dados['Runtime'].str.split(' ').str[0].astype(int)
+
+#     # Interactivity with Plotly Regression Plot
+#     fig = px.scatter(data, x='Released_Year', y='Runtime', trendline="ols", title="Duração dos Filmes por Década")
+#     fig.update_layout(plot_bgcolor='white')
+#     st.plotly_chart(fig)
+
+#     # Análise
+#     st.subheader('Análise')
+#     st.write("A duração dos filmes aumentou com o tempo, mas parece estabilizar após a década de 90.")
 
 # def atores_x_frequencia(): 
 #     st.title("Frequência de atores e atrizes em papéis de destaque")
@@ -345,7 +367,7 @@ def atores_x_frequencia():
     background_color = 'white', # cor de fundo
     width = 1000, # largura
     height = 500, # altura
-    colormap = 'winter') # cor das palavras)
+    colormap = 'Blues_r') # cor das palavras)
     wordcloud.generate_from_frequencies(frequencies = d)
     #plotando a figura no site
     plt.figure(figsize = (15, 10))
