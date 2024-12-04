@@ -1,8 +1,7 @@
-﻿streamlit
+streamlit
 pandas
 plotly
 seaborn
 matplotlib
 wordcloud
-sklearn.tree
-sklearn
+scikit-learn
